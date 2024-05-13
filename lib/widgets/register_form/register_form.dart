@@ -56,9 +56,8 @@ class _RegisterFormState extends State<RegisterForm> {
 
   Future<bool> _sendToBackend() async {
     try {
-      final userCredentials = await firebaseAuth.createUserWithEmailAndPassword(
+      await auth.createUserWithEmailAndPassword(
           email: _emailController.text, password: _passwordController.text);
-      print(userCredentials);
     } on FirebaseAuthException catch (error) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
