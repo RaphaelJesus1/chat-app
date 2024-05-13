@@ -1,19 +1,16 @@
+import 'package:chat_app/utils/firebase.dart';
 import 'package:chat_app/widgets/chat_input.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'login.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
 
+  void _logout() {
+    auth.signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
-    void _logout() {
-      Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-        return const LoginScreen();
-      }));
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('FlutterChat'),
