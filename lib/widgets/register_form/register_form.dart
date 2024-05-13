@@ -1,20 +1,22 @@
 import 'dart:io';
 
 import 'package:chat_app/utils/pick_image.dart';
+import 'package:chat_app/utils/validator.dart';
 import 'package:chat_app/widgets/register_form/photo_method_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class RegisterForm extends StatefulWidget {
-  RegisterForm({super.key, required this.goToLogin});
+  const RegisterForm({super.key, required this.goToLogin});
 
-  void Function() goToLogin;
+  final void Function() goToLogin;
 
   @override
   State<RegisterForm> createState() => _RegisterFormState();
 }
 
 class _RegisterFormState extends State<RegisterForm> {
+  final _form = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -41,16 +43,20 @@ class _RegisterFormState extends State<RegisterForm> {
         show ? Icons.visibility_outlined : Icons.visibility_off_outlined);
   }
 
-  void _createAccount() {
-    widget.goToLogin();
-  }
-
   void _setProfileImage(ImageSource source) async {
     final image = await pickImage(source);
     if (image != null) {
       setState(() {
         _profileImage = image;
       });
+    }
+  }
+
+  void _submit() {
+    final isValid = _form.currentState!.validate();
+    if (isValid) {
+      _form.currentState!.save();
+      widget.goToLogin();
     }
   }
 
@@ -76,6 +82,7 @@ class _RegisterFormState extends State<RegisterForm> {
     }
 
     return Form(
+      key: _form,
       child: Column(
         children: [
           Row(
@@ -96,6 +103,7 @@ class _RegisterFormState extends State<RegisterForm> {
               Expanded(
                 child: TextFormField(
                   controller: _nameController,
+                  validator: Validator.name,
                   decoration: const InputDecoration(labelText: "Name"),
                 ),
               ),
@@ -103,12 +111,17 @@ class _RegisterFormState extends State<RegisterForm> {
           ),
           TextFormField(
             controller: _emailController,
+            validator: Validator.email,
             decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.mail_outline), labelText: "E-mail"),
+            keyboardType: TextInputType.emailAddress,
+            autocorrect: false,
+            textCapitalization: TextCapitalization.none,
           ),
           const SizedBox(height: 8),
           TextFormField(
             controller: _passwordController,
+            validator: Validator.password,
             obscureText: !_showPassword,
             decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.lock_outline),
@@ -119,6 +132,8 @@ class _RegisterFormState extends State<RegisterForm> {
           ),
           TextFormField(
             controller: _confirmPasswordController,
+            validator: (value) =>
+                Validator.confirmPassword(value, _passwordController.text),
             obscureText: !_showConfirmPassword,
             decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.lock_outline),
@@ -129,7 +144,7 @@ class _RegisterFormState extends State<RegisterForm> {
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: _createAccount,
+            onPressed: _submit,
             style: ElevatedButton.styleFrom(
                 backgroundColor:
                     Theme.of(context).colorScheme.primaryContainer),
