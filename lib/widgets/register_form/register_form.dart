@@ -65,7 +65,7 @@ class _RegisterFormState extends State<RegisterForm> {
 
   @override
   Widget build(BuildContext context) {
-    void _showImageMethodModal() {
+    void showImageMethodModal() {
       showModalBottomSheet(
           context: context,
           builder: (ctx) => PhotoMethodDrawer(onTapCamera: () {
@@ -81,7 +81,7 @@ class _RegisterFormState extends State<RegisterForm> {
           Row(
             children: [
               GestureDetector(
-                onTap: _showImageMethodModal,
+                onTap: showImageMethodModal,
                 child: CircleAvatar(
                   radius: 24,
                   backgroundImage: _profileImage != null
@@ -96,7 +96,7 @@ class _RegisterFormState extends State<RegisterForm> {
               Expanded(
                 child: TextFormField(
                   controller: _nameController,
-                  decoration: const InputDecoration(label: Text("Name")),
+                  decoration: const InputDecoration(labelText: "Name"),
                 ),
               ),
             ],
@@ -104,7 +104,7 @@ class _RegisterFormState extends State<RegisterForm> {
           TextFormField(
             controller: _emailController,
             decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.mail_outline), label: Text("E-mail")),
+                prefixIcon: Icon(Icons.mail_outline), labelText: "E-mail"),
           ),
           const SizedBox(height: 8),
           TextFormField(
@@ -112,7 +112,7 @@ class _RegisterFormState extends State<RegisterForm> {
             obscureText: !_showPassword,
             decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.lock_outline),
-                label: const Text("Password"),
+                labelText: "Password",
                 suffixIcon: IconButton(
                     onPressed: _togglePasswordVisibility,
                     icon: _getVisibilityIcon(_showPassword))),
@@ -122,28 +122,26 @@ class _RegisterFormState extends State<RegisterForm> {
             obscureText: !_showConfirmPassword,
             decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.lock_outline),
-                label: const Text("Confirm password"),
+                labelText: "Confirm password",
                 suffixIcon: IconButton(
                     onPressed: _toggleConfirmVisibility,
                     icon: _getVisibilityIcon(_showConfirmPassword))),
           ),
           const SizedBox(height: 16),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextButton(
-                onPressed: () {
-                  widget.goToLogin();
-                },
-                child: const Text("Cancel"),
-              ),
-              const SizedBox(width: 8),
-              ElevatedButton(
-                onPressed: _createAccount,
-                child: const Text("Create"),
-              ),
-            ],
-          )
+          ElevatedButton(
+            onPressed: _createAccount,
+            style: ElevatedButton.styleFrom(
+                backgroundColor:
+                    Theme.of(context).colorScheme.primaryContainer),
+            child: const Text("Sign up"),
+          ),
+          const SizedBox(height: 4),
+          TextButton(
+            onPressed: () {
+              widget.goToLogin();
+            },
+            child: const Text("I already have an account"),
+          ),
         ],
       ),
     );

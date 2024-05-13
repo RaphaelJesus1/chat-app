@@ -10,19 +10,19 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  bool isLoginScreen = true;
+  bool isLogin = true;
 
   Widget getForm() {
-    if (isLoginScreen) {
+    if (isLogin) {
       return LoginForm(onTapRegister: () {
         setState(() {
-          isLoginScreen = false;
+          isLogin = false;
         });
       });
     }
     return RegisterForm(goToLogin: () {
       setState(() {
-        isLoginScreen = true;
+        isLogin = true;
       });
     });
   }
@@ -34,9 +34,11 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         title: const Text('FlutterChat 💬'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: form,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: form,
+        ),
       ),
     );
   }

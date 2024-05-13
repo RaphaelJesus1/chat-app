@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class LoginForm extends StatefulWidget {
-  LoginForm({super.key, required this.onTapRegister});
+  const LoginForm({super.key, required this.onTapRegister});
 
-  void Function() onTapRegister;
+  final void Function() onTapRegister;
 
   @override
   State<LoginForm> createState() => _LoginFormState();
@@ -37,7 +37,10 @@ class _LoginFormState extends State<LoginForm> {
           TextFormField(
             controller: _emailController,
             decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.mail_outline), label: Text("E-mail")),
+                prefixIcon: Icon(Icons.mail_outline), labelText: "E-mail"),
+            keyboardType: TextInputType.emailAddress,
+            autocorrect: false,
+            textCapitalization: TextCapitalization.none,
           ),
           const SizedBox(height: 8),
           TextFormField(
@@ -45,7 +48,7 @@ class _LoginFormState extends State<LoginForm> {
             obscureText: !_showPassword,
             decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.lock_outline),
-                label: const Text("Password"),
+                labelText: "Password",
                 suffixIcon: IconButton(
                     onPressed: _togglePasswordVisibility,
                     icon: Icon(_showPassword
@@ -55,7 +58,10 @@ class _LoginFormState extends State<LoginForm> {
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: _login,
-            child: const Text("Login"),
+            style: ElevatedButton.styleFrom(
+                backgroundColor:
+                    Theme.of(context).colorScheme.primaryContainer),
+            child: const Text("Log in"),
           ),
           const SizedBox(height: 8),
           TextButton(
