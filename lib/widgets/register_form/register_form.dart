@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:chat_app/utils/firebase.dart';
 import 'package:chat_app/utils/pick_image.dart';
 import 'package:chat_app/utils/validator.dart';
 import 'package:chat_app/widgets/register_form/photo_method_drawer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -52,12 +54,39 @@ class _RegisterFormState extends State<RegisterForm> {
     }
   }
 
-  void _submit() {
+  Future<bool> _sendToBackend() async {
+    try {
+      final userCredentials = await firebaseAuth.createUserWithEmailAndPassword(
+          email: _emailController.text, password: _passwordController.text);
+      print(userCredentials);
+    } on FirebaseAuthException catch (error) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error.message ?? "Authentication failed")));
+      return false;
+    }
+    return true;
+  }
+
+  void _submit() async {
     final isValid = _form.currentState!.validate();
     if (isValid) {
       _form.currentState!.save();
-      widget.goToLogin();
+      final success = await _sendToBackend();
+      if (success) {
+        widget.goToLogin();
+      }
     }
+  }
+
+  void showImageMethodModal() {
+    showModalBottomSheet(
+        context: context,
+        builder: (ctx) => PhotoMethodDrawer(onTapCamera: () {
+              _setProfileImage(ImageSource.camera);
+            }, onTapGallery: () {
+              _setProfileImage(ImageSource.gallery);
+            }));
   }
 
   @override
@@ -71,16 +100,6 @@ class _RegisterFormState extends State<RegisterForm> {
 
   @override
   Widget build(BuildContext context) {
-    void showImageMethodModal() {
-      showModalBottomSheet(
-          context: context,
-          builder: (ctx) => PhotoMethodDrawer(onTapCamera: () {
-                _setProfileImage(ImageSource.camera);
-              }, onTapGallery: () {
-                _setProfileImage(ImageSource.gallery);
-              }));
-    }
-
     return Form(
       key: _form,
       child: Column(
