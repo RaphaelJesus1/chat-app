@@ -1,6 +1,5 @@
 import 'package:chat_app/widgets/register_form/photo_method_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class RegisterForm extends StatefulWidget {
   RegisterForm({super.key, required this.goToLogin});
@@ -12,10 +11,10 @@ class RegisterForm extends StatefulWidget {
 }
 
 class _RegisterFormState extends State<RegisterForm> {
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _confirmPasswordController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
   bool _showPassword = false;
   bool _showConfirmPassword = false;
