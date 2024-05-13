@@ -9,9 +9,9 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void _logout() {
-      // Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-      //   return const LoginScreen();
-      // }));
+      Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+        return const LoginScreen();
+      }));
     }
 
     return Scaffold(
