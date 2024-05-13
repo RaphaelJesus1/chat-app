@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class PhotoMethodDrawer extends StatelessWidget {
-  void Function() onTapCamera;
-  void Function() onTapGallery;
+  final void Function() onTapCamera;
+  final void Function() onTapGallery;
 
-  PhotoMethodDrawer(
+  const PhotoMethodDrawer(
       {super.key, required this.onTapCamera, required this.onTapGallery});
 
   @override
@@ -21,17 +21,17 @@ class PhotoMethodDrawer extends StatelessWidget {
               style: Theme.of(context).textTheme.titleLarge,
             ),
             ListTile(
-              title: const Text("Camera"),
-              onTap: () {
-                Navigator.of(context).pop();
-              },
-            ),
+                title: const Text("Camera"),
+                onTap: () {
+                  onTapCamera();
+                  Navigator.of(context).pop();
+                }),
             ListTile(
-              title: const Text("Gallery"),
-              onTap: () {
-                Navigator.of(context).pop();
-              },
-            ),
+                title: const Text("Gallery"),
+                onTap: () {
+                  onTapGallery();
+                  Navigator.of(context).pop();
+                }),
           ],
         ),
       ),

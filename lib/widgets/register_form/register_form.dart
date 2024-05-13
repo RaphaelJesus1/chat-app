@@ -1,5 +1,9 @@
+import 'dart:io';
+
+import 'package:chat_app/utils/pick_image.dart';
 import 'package:chat_app/widgets/register_form/photo_method_drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class RegisterForm extends StatefulWidget {
   RegisterForm({super.key, required this.goToLogin});
@@ -15,6 +19,7 @@ class _RegisterFormState extends State<RegisterForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  XFile? _profileImage;
 
   bool _showPassword = false;
   bool _showConfirmPassword = false;
@@ -40,6 +45,15 @@ class _RegisterFormState extends State<RegisterForm> {
     widget.goToLogin();
   }
 
+  void _setProfileImage(ImageSource source) async {
+    final image = await pickImage(source);
+    if (image != null) {
+      setState(() {
+        _profileImage = image;
+      });
+    }
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -54,8 +68,11 @@ class _RegisterFormState extends State<RegisterForm> {
     void _showImageMethodModal() {
       showModalBottomSheet(
           context: context,
-          builder: (ctx) =>
-              PhotoMethodDrawer(onTapCamera: () {}, onTapGallery: () {}));
+          builder: (ctx) => PhotoMethodDrawer(onTapCamera: () {
+                _setProfileImage(ImageSource.camera);
+              }, onTapGallery: () {
+                _setProfileImage(ImageSource.gallery);
+              }));
     }
 
     return Form(
@@ -65,9 +82,14 @@ class _RegisterFormState extends State<RegisterForm> {
             children: [
               GestureDetector(
                 onTap: _showImageMethodModal,
-                child: const CircleAvatar(
+                child: CircleAvatar(
                   radius: 24,
-                  child: Icon(Icons.add_a_photo_outlined),
+                  backgroundImage: _profileImage != null
+                      ? FileImage(File(_profileImage!.path))
+                      : null,
+                  child: _profileImage == null
+                      ? const Icon(Icons.add_a_photo_outlined)
+                      : null,
                 ),
               ),
               const SizedBox(width: 16),
