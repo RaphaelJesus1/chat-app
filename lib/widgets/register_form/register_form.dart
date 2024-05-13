@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:chat_app/utils/firebase.dart';
 import 'package:chat_app/utils/pick_image.dart';
 import 'package:chat_app/utils/validator.dart';
-import 'package:chat_app/widgets/register_form/photo_method_drawer.dart';
+import 'package:chat_app/widgets/register_form/user_image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -23,7 +23,7 @@ class _RegisterFormState extends State<RegisterForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  XFile? _profileImage;
+  File? _profileImage;
 
   bool _showPassword = false;
   bool _showConfirmPassword = false;
@@ -45,19 +45,24 @@ class _RegisterFormState extends State<RegisterForm> {
         show ? Icons.visibility_outlined : Icons.visibility_off_outlined);
   }
 
-  void _setProfileImage(ImageSource source) async {
-    final image = await pickImage(source);
-    if (image != null) {
-      setState(() {
-        _profileImage = image;
-      });
-    }
+  void _setProfileImage(File image) async {
+    setState(() {
+      _profileImage = image;
+    });
   }
 
   Future<bool> _sendToBackend() async {
     try {
-      await auth.createUserWithEmailAndPassword(
+      final userCredentials = await auth.createUserWithEmailAndPassword(
           email: _emailController.text, password: _passwordController.text);
+
+      final storageRef = storage
+          .ref()
+          .child("user_images")
+          .child("${userCredentials.user!.uid}.jpg");
+      await storageRef.putFile(_profileImage!);
+      final imageUrl = await storageRef.getDownloadURL();
+      print(imageUrl);
     } on FirebaseAuthException catch (error) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -69,23 +74,13 @@ class _RegisterFormState extends State<RegisterForm> {
 
   void _submit() async {
     final isValid = _form.currentState!.validate();
-    if (isValid) {
+    if (isValid && _profileImage != null) {
       _form.currentState!.save();
       final success = await _sendToBackend();
       if (success) {
         widget.goToLogin();
       }
     }
-  }
-
-  void showImageMethodModal() {
-    showModalBottomSheet(
-        context: context,
-        builder: (ctx) => PhotoMethodDrawer(onTapCamera: () {
-              _setProfileImage(ImageSource.camera);
-            }, onTapGallery: () {
-              _setProfileImage(ImageSource.gallery);
-            }));
   }
 
   @override
@@ -105,17 +100,9 @@ class _RegisterFormState extends State<RegisterForm> {
         children: [
           Row(
             children: [
-              GestureDetector(
-                onTap: showImageMethodModal,
-                child: CircleAvatar(
-                  radius: 24,
-                  backgroundImage: _profileImage != null
-                      ? FileImage(File(_profileImage!.path))
-                      : null,
-                  child: _profileImage == null
-                      ? const Icon(Icons.add_a_photo_outlined)
-                      : null,
-                ),
+              UserImagePicker(
+                profileImage: _profileImage,
+                setProfileImage: _setProfileImage,
               ),
               const SizedBox(width: 16),
               Expanded(
