@@ -17,6 +17,7 @@ class _LoginFormState extends State<LoginForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _showPassword = false;
+  bool _isAuthenticating = false;
 
   Future<bool> _sendToBackend() async {
     try {
@@ -35,7 +36,13 @@ class _LoginFormState extends State<LoginForm> {
     final isValid = _form.currentState!.validate();
     if (isValid) {
       _form.currentState!.save();
+      setState(() {
+        _isAuthenticating = true;
+      });
       await _sendToBackend();
+      setState(() {
+        _isAuthenticating = false;
+      });
     }
   }
 
@@ -83,11 +90,14 @@ class _LoginFormState extends State<LoginForm> {
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: _submit,
+            onPressed: _isAuthenticating ? null : _submit,
             style: ElevatedButton.styleFrom(
                 backgroundColor:
                     Theme.of(context).colorScheme.primaryContainer),
-            child: const Text("Log in"),
+            child: _isAuthenticating
+                ? const SizedBox(
+                    width: 16, height: 16, child: CircularProgressIndicator())
+                : const Text("Log in"),
           ),
           const SizedBox(height: 8),
           TextButton(

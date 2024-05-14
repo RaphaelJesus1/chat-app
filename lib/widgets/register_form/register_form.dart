@@ -27,6 +27,7 @@ class _RegisterFormState extends State<RegisterForm> {
 
   bool _showPassword = false;
   bool _showConfirmPassword = false;
+  bool _isUploading = false;
 
   void _togglePasswordVisibility() {
     setState(() {
@@ -76,7 +77,13 @@ class _RegisterFormState extends State<RegisterForm> {
     final isValid = _form.currentState!.validate();
     if (isValid && _profileImage != null) {
       _form.currentState!.save();
+      setState(() {
+        _isUploading = true;
+      });
       final success = await _sendToBackend();
+      setState(() {
+        _isUploading = false;
+      });
       if (success) {
         widget.goToLogin();
       }
@@ -149,11 +156,14 @@ class _RegisterFormState extends State<RegisterForm> {
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: _submit,
+            onPressed: _isUploading ? null : _submit,
             style: ElevatedButton.styleFrom(
                 backgroundColor:
                     Theme.of(context).colorScheme.primaryContainer),
-            child: const Text("Sign up"),
+            child: _isUploading
+                ? const SizedBox(
+                    height: 16, width: 16, child: CircularProgressIndicator())
+                : const Text("Sign up"),
           ),
           const SizedBox(height: 4),
           TextButton(
