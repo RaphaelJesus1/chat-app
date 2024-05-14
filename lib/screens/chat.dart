@@ -1,5 +1,6 @@
 import 'package:chat_app/utils/firebase.dart';
-import 'package:chat_app/widgets/chat_input.dart';
+import 'package:chat_app/widgets/chat/chat_input.dart';
+import 'package:chat_app/widgets/chat/chat_messages.dart';
 import 'package:flutter/material.dart';
 
 class ChatScreen extends StatelessWidget {
@@ -22,12 +23,8 @@ class ChatScreen extends StatelessWidget {
           )
         ],
       ),
-      body: const Stack(children: [
-        Center(
-          child: Text('No messages found.'),
-        ),
-        Positioned(bottom: 0, child: ChatInput())
-      ]),
+      body: const Column(
+          children: [Expanded(child: ChatMessages()), ChatInput()]),
     );
   }
 }

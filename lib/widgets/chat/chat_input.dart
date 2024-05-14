@@ -24,7 +24,7 @@ class _ChatInputState extends State<ChatInput> {
         "username": userData.data()!["username"],
         "userImage": userData.data()!["profile_url"]
       });
-    } on FirebaseException catch (error) {
+    } catch (error) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Failed to send message")));
