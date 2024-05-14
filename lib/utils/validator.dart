@@ -18,7 +18,9 @@ class Validator {
   }
 
   static String? name(String? value) {
-    return _isEmpty(value) ? "Please enter your name" : null;
+    return _isEmpty(value) || value!.length < 4
+        ? "Please enter your name"
+        : null;
   }
 
   static String? confirmPassword(String? value, String password) {

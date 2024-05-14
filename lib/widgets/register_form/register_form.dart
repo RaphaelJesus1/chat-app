@@ -63,7 +63,12 @@ class _RegisterFormState extends State<RegisterForm> {
           .child("${userCredentials.user!.uid}.jpg");
       await storageRef.putFile(_profileImage!);
       final imageUrl = await storageRef.getDownloadURL();
-      print(imageUrl);
+
+      await database.collection("users").doc(userCredentials.user!.uid).set({
+        "username": _nameController.text,
+        "email": _emailController.text,
+        "profile_url": imageUrl,
+      });
     } on FirebaseAuthException catch (error) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
